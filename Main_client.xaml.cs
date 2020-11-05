@@ -22,6 +22,15 @@ namespace NC_Client_Alpha
         {
             InitializeComponent();
         }
+
+
+
+
+
+
+
+
+
         private void GetImages(string path, List<BitmapImage> list)
         {
             DirectoryInfo folder = new DirectoryInfo(path);
@@ -37,6 +46,18 @@ namespace NC_Client_Alpha
                         src.EndInit();
                         list.Add(src);
                     }
+                }
+            }
+        }
+
+        private void GetTexts(string path, List<string> list)
+        {
+            string line;
+            using (StreamReader stream = new StreamReader(path))
+            {
+                while ((line = stream.ReadLine()) != null)
+                {
+                   list.Add(line);
                 }
             }
         }
