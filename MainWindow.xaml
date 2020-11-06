@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NC_Client_Alpha"
         mc:Ignorable="d"
-        Title="MainWindow" Height="480" Width="854">
+        Title="MainWindow" Height="480" Width="854" Loaded="Window_Loaded">
     <Grid>
         <Image Name="Background" Height="480" Width="854"/>
     </Grid>
+
 </Window>

@@ -11,6 +11,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace NC_Client_Alpha
 {
@@ -22,44 +24,55 @@ namespace NC_Client_Alpha
         public MainWindow()
         {
             InitializeComponent();
-        }
 
-        void LoadSettings(string path)
+            config_file.Widowd_Height = 100;
+            config_file.Widowd_Width = 100;
+
+            //SettingsFile loadConfig = LoadConfig();
+            //MessageBox.Show(loadConfig.Widowd_Height.ToString());
+        }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            XmlDocument xDoc = new XmlDocument();
-            xDoc.Load("users.xml");
-            // получим корневой элемент
-            XmlElement xRoot = xDoc.DocumentElement;
-            // обход всех узлов в корневом элементе
-            foreach (XmlNode xnode in xRoot)
-            {
-                // получаем атрибут name
-                if (xnode.Attributes.Count > 0)
-                {
-                    XmlNode attr = xnode.Attributes.GetNamedItem("name");
-                    if (attr != null)
-                        Console.WriteLine(attr.Value);
-                }
-                // обходим все дочерние узлы элемента user
-                foreach (XmlNode childnode in xnode.ChildNodes)
-                {
-                    // если узел - company
-                    if (childnode.Name == "company")
-                    {
-                        Console.WriteLine("Компания: {0}", childnode.InnerText);
-                    }
-                    // если узел age
-                    if (childnode.Name == "age")
-                    {
-                        Console.WriteLine("Возраст: {0}", childnode.InnerText);
-                    }
-                }
-                Console.WriteLine();
-            }
-            Console.Read();
-
-
+            SaveConfig();
+            SettingsFile loadConfig = LoadConfig();
+            MessageBox.Show(loadConfig.Widowd_Height.ToString());
         }
+
+        SettingsFile config_file = new SettingsFile();
+
+        SettingsFile LoadConfig()
+        {
+            string load_config;
+            using (FileStream fs = new FileStream("config.json", FileMode.Open, FileAccess.Read))
+            {
+                using (var stream = new StreamReader(fs))
+                {
+                    load_config = stream.ReadToEnd();
+                    return JsonSerializer.Deserialize<SettingsFile>(load_config);
+                }
+            }
+        }
+
+        void SaveConfig()
+        {
+            string save_config = JsonSerializer.Serialize<SettingsFile>(config_file);
+
+            try
+            {
+                using (FileStream fs = new FileStream("config.json", FileMode.OpenOrCreate, FileAccess.Write))
+                {
+                    using(var stream = new StreamWriter(fs))
+                    {
+                        stream.Write(save_config);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         private void GetImages(string path, List<BitmapImage> list)
         {
             DirectoryInfo folder = new DirectoryInfo(path);
@@ -90,5 +103,7 @@ namespace NC_Client_Alpha
                 }
             }
         }
+
+
     }
 }
