@@ -86,9 +86,9 @@ namespace NC_Client_Alpha
 
         private void GetImages(string path, List<BitmapImage> list)
         {
-            DirectoryInfo folder = new DirectoryInfo(path);
-            if (folder.Exists)
+            if (Directory.Exists(path))
             {
+                DirectoryInfo folder = new DirectoryInfo(path);
                 foreach (FileInfo fileInfo in folder.GetFiles())
                 {
                     if (".jpg|.jpeg|.png".Contains(fileInfo.Extension.ToLower()))
@@ -114,5 +114,7 @@ namespace NC_Client_Alpha
                 }
             }
         }
+
+
     }
 }
