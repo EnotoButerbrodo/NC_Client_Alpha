@@ -8,8 +8,8 @@ namespace NC_Client_Alpha
     [Serializable]
     public class SettingsFile
     {
-        public int Widowd_Width { get; set; }
-        public int Widowd_Height { get; set; }
+        public int Window_Width { get; set; }
+        public int Window_Height { get; set; }
     }
 
 }

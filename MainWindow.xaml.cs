@@ -25,31 +25,36 @@ namespace NC_Client_Alpha
         {
             InitializeComponent();
 
-            config_file.Widowd_Height = 100;
-            config_file.Widowd_Width = 100;
-
             //SettingsFile loadConfig = LoadConfig();
             //MessageBox.Show(loadConfig.Widowd_Height.ToString());
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            SaveConfig();
-            SettingsFile loadConfig = LoadConfig();
-            MessageBox.Show(loadConfig.Widowd_Height.ToString());
+            LoadConfig();
+            Application.Current.MainWindow.Width = config_file.Window_Width;
+            Application.Current.MainWindow.Height = config_file.Window_Height;
+
         }
 
         SettingsFile config_file = new SettingsFile();
 
-        SettingsFile LoadConfig()
+        void LoadConfig()
         {
             string load_config;
+            try
+            {
             using (FileStream fs = new FileStream("config.json", FileMode.Open, FileAccess.Read))
             {
                 using (var stream = new StreamReader(fs))
                 {
                     load_config = stream.ReadToEnd();
-                    return JsonSerializer.Deserialize<SettingsFile>(load_config);
+                    config_file =  JsonSerializer.Deserialize<SettingsFile>(load_config);
                 }
+            }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -103,7 +108,5 @@ namespace NC_Client_Alpha
                 }
             }
         }
-
-
     }
 }
