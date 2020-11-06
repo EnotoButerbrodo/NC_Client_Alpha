@@ -23,21 +23,27 @@ namespace NC_Client_Alpha
     {
         public MainWindow()
         {
+            
             InitializeComponent();
+            FirstSetup();
+            GetImages(@"C:\Users\Игорь\Desktop\done\NCE_content\Backgrounds",
+                backgrounds);
+            Background.Source = backgrounds[0];
+
 
             //SettingsFile loadConfig = LoadConfig();
             //MessageBox.Show(loadConfig.Widowd_Height.ToString());
         }
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+
+        SettingsFile config_file = new SettingsFile();
+        List<BitmapImage> backgrounds = new List<BitmapImage>();
+        void FirstSetup()
         {
             LoadConfig();
             Application.Current.MainWindow.Width = config_file.Window_Width;
             Application.Current.MainWindow.Height = config_file.Window_Height;
 
         }
-
-        SettingsFile config_file = new SettingsFile();
-
         void LoadConfig()
         {
             string load_config;

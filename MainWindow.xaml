@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NC_Client_Alpha"
         mc:Ignorable="d"
-        Title="Main Window" Name ="Main_Window"  Height="480" Width="854" Loaded="Window_Loaded">
+        Title="Main Window" Name ="Main_Window"  Height="480" Width="854" ResizeMode="CanMinimize">
     <Grid>
-        <Image Name="Background" Height="480" Width="854"/>
+        <Image Name="Background" Grid.Column="0" Grid.Row="0" Width="Auto" Height="Auto" Stretch="Fill"/>
     </Grid>
 
 </Window>
