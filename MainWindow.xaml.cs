@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 using System.Xml;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.IO.Compression;
 
 namespace NC_Client_Alpha
 {
@@ -29,10 +30,6 @@ namespace NC_Client_Alpha
             GetImages(@"C:\Users\Игорь\Desktop\done\NCE_content\Backgrounds",
                 backgrounds);
             Background.Source = backgrounds[0];
-
-
-            //SettingsFile loadConfig = LoadConfig();
-            //MessageBox.Show(loadConfig.Widowd_Height.ToString());
         }
 
         SettingsFile config_file = new SettingsFile();
@@ -63,7 +60,6 @@ namespace NC_Client_Alpha
                 MessageBox.Show(ex.Message);
             }
         }
-
         void SaveConfig()
         {
             string save_config = JsonSerializer.Serialize<SettingsFile>(config_file);
@@ -83,7 +79,6 @@ namespace NC_Client_Alpha
                 MessageBox.Show(ex.Message);
             }
         }
-
         private void GetImages(string path, List<BitmapImage> list)
         {
             if (Directory.Exists(path))
@@ -102,7 +97,6 @@ namespace NC_Client_Alpha
                 }
             }
         }
-
         private void GetTexts(string path, List<string> list)
         {
             string line;
@@ -111,6 +105,40 @@ namespace NC_Client_Alpha
                 while ((line = stream.ReadLine()) != null)
                 {
                     list.Add(line);
+                }
+            }
+        }
+        void ReadImageFromZip(string zipPath, string Folder, List<string> needingImagesList, List<BitmapImage> image_list)
+        {
+            using (ZipArchive archive = ZipFile.Open(zipPath, ZipArchiveMode.Read))
+            {
+                try
+                {
+                    foreach (var entry in archive.Entries)
+                    {
+
+                        if (entry.FullName.Contains(Folder) & needingImagesList.Contains(entry.Name))
+                        {
+                            try
+                            {
+                                BitmapImage src = new BitmapImage();
+                                src.BeginInit();
+                                src.StreamSource = entry.Open();
+                                src.EndInit();
+                                image_list.Add(src);
+                                needingImagesList.RemoveAt(needingImagesList.FindIndex(item => item == entry.Name));
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(ex.Message + "Hui");
+                            }
+                        }
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
                 }
             }
         }
