@@ -14,6 +14,7 @@ using System.Xml;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.IO.Compression;
+using System.Threading.Tasks;
 
 namespace NC_Client_Alpha
 {
@@ -27,13 +28,19 @@ namespace NC_Client_Alpha
             
             InitializeComponent();
             FirstSetup();
-            GetImages(@"C:\Users\Игорь\Desktop\done\NCE_content\Backgrounds",
-                backgrounds);
-            Background.Source = backgrounds[0];
+            ReadImageFromZip(@"C:\Users\Игорь\Desktop\done\NCE_content\images.zip",
+              "Monika", needImages, images);
+            Background.Source = images[0];
+
         }
 
         SettingsFile config_file = new SettingsFile();
         List<BitmapImage> backgrounds = new List<BitmapImage>();
+        List<string> needImages = new List<string>()
+        {
+            "Default.png"
+        };
+        List<BitmapImage> images = new List<BitmapImage>();
         void FirstSetup()
         {
             LoadConfig();
@@ -110,7 +117,7 @@ namespace NC_Client_Alpha
         }
         void ReadImageFromZip(string zipPath, string Folder, List<string> needingImagesList, List<BitmapImage> image_list)
         {
-            using (ZipArchive archive = ZipFile.Open(zipPath, ZipArchiveMode.Read))
+            ZipArchive archive = ZipFile.Open(zipPath, ZipArchiveMode.Read);
             {
                 try
                 {
@@ -121,19 +128,28 @@ namespace NC_Client_Alpha
                         {
                             try
                             {
-                                BitmapImage src = new BitmapImage();
-                                src.BeginInit();
-                                src.StreamSource = entry.Open();
-                                src.EndInit();
-                                image_list.Add(src);
-                                needingImagesList.RemoveAt(needingImagesList.FindIndex(item => item == entry.Name));
+                                
+                               BitmapImage src = new BitmapImage();
+                                src.DownloadCompleted += (s, e) =>
+                                {
+                                    archive.Dispose();
+                                };
+                               
+                               src.BeginInit();
+                               src.CacheOption = BitmapCacheOption.OnLoad;
+                               src.StreamSource = entry.Open();
+                               src.EndInit();
+                               image_list.Add(src);
+                               needingImagesList.RemoveAt(needingImagesList.FindIndex(item => item == entry.Name));
+                               
+                               //MessageBox.Show(image_list[0].ToString());
                             }
                             catch (Exception ex)
                             {
                                 MessageBox.Show(ex.Message + "Hui");
                             }
                         }
-
+    
                     }
                 }
                 catch (Exception ex)
@@ -143,6 +159,16 @@ namespace NC_Client_Alpha
             }
         }
 
+        private void Main_Window_Loaded(object sender, RoutedEventArgs e)
+        {
 
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ReadImageFromZip(@"C:\Users\Игорь\Desktop\done\NCE_content\images.zip",
+               "Monika", needImages, images);
+            Background.Source = images[0];
+        }
     }
 }
